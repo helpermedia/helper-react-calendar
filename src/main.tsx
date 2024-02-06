@@ -5,6 +5,6 @@ import Calendar from './index'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Calendar />
+    <Calendar numberOfMonths={3} />
   </React.StrictMode>,
 )

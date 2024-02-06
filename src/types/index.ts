@@ -1,7 +1,7 @@
 export type CalMonth = {
   year: number
   month: number
-  weeks: CalWeek[]
+  //weeks: CalWeek[]
   selectableDates?: Date[]
   activeDates?: Date[]
 }
