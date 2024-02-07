@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import IconPrev from '../assets/previous.svg?react'
 import IconNext from '../assets/next.svg?react'
 import Month from './Month'
@@ -20,10 +20,10 @@ export default function Calendar({
 }: Props): React.ReactElement {
 
   const [currentDate, setCurrentDate] = useState(activeDate)
-  const [months, setMonths] = useState<CalMonth[]>([])
 
-  useEffect(() => {
-    const monthItems = []
+  /* Return an array of months */
+  const getMonths = (currentDate: Date, numberOfMonths: number) => {
+    const monthItems: CalMonth[] = []
 
     for (let i = 0; i < numberOfMonths; i++) {
       const currentDateNextMonth = addMonths(currentDate, i)
@@ -33,9 +33,13 @@ export default function Calendar({
       })
     }
 
-    setMonths(monthItems)
-  }, [currentDate, numberOfMonths])
+    return monthItems;
+  }
 
+  /* useMemo will only re-run the getMonths method when the currentDate or numberOfMonths changes */
+  const months: CalMonth[] = useMemo(() => getMonths(currentDate, numberOfMonths), [currentDate, numberOfMonths]);
+
+  /* Change the current month */
   const changeMonth = (direction: string) => {
     if (direction === 'prev') {
       setCurrentDate(subMonths(currentDate, 1))
@@ -56,13 +60,9 @@ export default function Calendar({
         {nextEl}
       </button>
 
-      {months.length === 0 ? (
-        <div className='cal-loading'>Loading...</div>
-      ) : (
-        months.map((month, key) => (
-          <Month key={key} year={month.year} month={month.month} />
-        ))
-      )}
+      {months.map((month, key) => (
+        <Month key={key} year={month.year} month={month.month} />
+      ))}
 
     </div>
   )
