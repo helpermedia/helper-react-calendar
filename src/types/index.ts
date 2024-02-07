@@ -1,9 +1,7 @@
 export type CalMonth = {
   year: number
   month: number
-  //weeks: CalWeek[]
-  selectableDates?: Date[]
-  activeDates?: Date[]
+  weeks: CalWeek[]
 }
 
 export type CalWeek = {
@@ -14,6 +12,7 @@ export type CalWeek = {
 export type CalDay = {
   date: Date
   dayOfTheWeek: number
+  weekNumber: number
   classNames?: string[]
 }
 

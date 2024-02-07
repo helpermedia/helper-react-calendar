@@ -34,7 +34,7 @@ $gap: 1.5rem;
   flex-wrap: wrap;
   flex-direction: row;
   .cal-month {
-    flex: 0 0 33.333333%;
+    flex: 0 0 calc(1/3 * 100%);
   }
 }
 
@@ -47,53 +47,6 @@ $gap: 1.5rem;
   border-left: 1px solid $border-color;
   text-align: center;
 }
-
-/*
-.cal-months {
-  display: flex;
-  flex-direction: column;
-
-  @media (min-width: $breakpoint-tablet) {
-    flex-direction: row;
-
-    &.months-3 .cal-month {
-      flex: 1 1 0;
-      justify-content: space-between;
-
-      &:last-child {
-        margin-right: 0;
-      }
-
-    }
-
-    &.months-2 .cal-month {
-      flex: 1 0;
-      justify-content: left;
-
-      @media (min-width: $breakpoint-widescreen) {
-        max-width: 27.25rem;
-      }
-    }
-  }
-
-  .cal-month {
-    background: $white;
-    margin-bottom: $gap;
-
-    @media (min-width: $breakpoint-tablet) {
-      margin: 0 calc($gap / 2);
-    }
-
-    @media (min-width: $breakpoint-widescreen) {
-      max-width: 27.625rem;
-    }
-  }
-
-  .cal-month:first-child {
-    margin-left: 0;
-  }
-}
-*/
 
 /* Navigation */
 .cal-prev, .cal-next {
@@ -118,4 +71,16 @@ $gap: 1.5rem;
 
 .cal-next {
   right: .5rem;
+}
+
+.cal-week {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.cal-day {
+  flex: 0 0 calc(1/7 * 100%);
+  text-align: center;
+  vertical-align: middle;
 }
