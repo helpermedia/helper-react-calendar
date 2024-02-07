@@ -1,18 +1,22 @@
 import React from 'react'
+import { Locale, format } from 'date-fns'
 
 type Props = {
   year: number,
   month: number,
+  locale: Locale,
 }
 
 export default function Month({
   year,
   month,
+  locale,
 }: Props): React.ReactElement {
   return (
     <div className="cal-month">
-      <h2>{year}</h2>
-      <h3>{month + 1}</h3>
+      <div className="cal-month-title">
+        {format(new Date(year, month), 'LLLL', { locale: locale })} {year}
+      </div>
      </div>
   )
 }

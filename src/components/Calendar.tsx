@@ -3,13 +3,15 @@ import IconPrev from '../assets/previous.svg?react'
 import IconNext from '../assets/next.svg?react'
 import Month from './Month'
 import { CalMonth } from '../types'
-import { subMonths, addMonths } from 'date-fns'
+import { Locale, subMonths, addMonths } from 'date-fns'
+import enUS from 'date-fns/locale/en-US'
 
 type Props = {
   activeDate?: Date,
   numberOfMonths?: number,
   prevEl?: React.ReactElement,
   nextEl?: React.ReactElement,
+  locale?: Locale,
 }
 
 export default function Calendar({
@@ -17,11 +19,12 @@ export default function Calendar({
   numberOfMonths = 1,
   prevEl = <IconPrev />,
   nextEl = <IconNext />,
+  locale = enUS,
 }: Props): React.ReactElement {
 
   const [currentDate, setCurrentDate] = useState(activeDate)
 
-  /* Return an array of months */
+  /* Create an array of CalMonth objects */
   const getMonths = (currentDate: Date, numberOfMonths: number) => {
     const monthItems: CalMonth[] = []
 
@@ -50,7 +53,7 @@ export default function Calendar({
   }
 
   return (
-    <div className="cal-container">
+    <div className={`cal-container ${numberOfMonths > 1 ? 'multiple' : 'single'}`}>
 
       <button className="cal-prev" onClick={() => changeMonth('prev')}>
         {prevEl}
@@ -61,7 +64,7 @@ export default function Calendar({
       </button>
 
       {months.map((month, key) => (
-        <Month key={key} year={month.year} month={month.month} />
+        <Month key={key} year={month.year} month={month.month} locale={locale} />
       ))}
 
     </div>

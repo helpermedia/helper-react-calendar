@@ -1,5 +1,11 @@
 @charset "utf-8";
 
+body {
+  font-family: system-ui, -apple-system, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
 /* Breakpoints */
 $breakpoint-tablet: 769px;
 $breakpoint-desktop: 1024px;
@@ -19,8 +25,79 @@ $gap: 1.5rem;
   position: relative;
 }
 
+.cal-container.single {
+  max-width: 26rem;
+}
+
+.cal-container.multiple {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  .cal-month {
+    flex: 0 0 33.333333%;
+  }
+}
+
+.cal-month-title {
+  font-size: 1.5rem;
+  line-height: 2.5rem;
+  height: 2.5rem;
+  border-top: 1px solid $border-color;
+  border-right: 1px solid $border-color;
+  border-left: 1px solid $border-color;
+  text-align: center;
+}
+
+/*
+.cal-months {
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: $breakpoint-tablet) {
+    flex-direction: row;
+
+    &.months-3 .cal-month {
+      flex: 1 1 0;
+      justify-content: space-between;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+    }
+
+    &.months-2 .cal-month {
+      flex: 1 0;
+      justify-content: left;
+
+      @media (min-width: $breakpoint-widescreen) {
+        max-width: 27.25rem;
+      }
+    }
+  }
+
+  .cal-month {
+    background: $white;
+    margin-bottom: $gap;
+
+    @media (min-width: $breakpoint-tablet) {
+      margin: 0 calc($gap / 2);
+    }
+
+    @media (min-width: $breakpoint-widescreen) {
+      max-width: 27.625rem;
+    }
+  }
+
+  .cal-month:first-child {
+    margin-left: 0;
+  }
+}
+*/
+
 /* Navigation */
 .cal-prev, .cal-next {
+  cursor: pointer;
   position: absolute;
   top: .5rem;
   background: none;
@@ -37,10 +114,8 @@ $gap: 1.5rem;
 }
 .cal-prev {
   left: .5rem;
-  cursor: pointer;
 }
 
 .cal-next {
   right: .5rem;
-  cursor: pointer;
 }
