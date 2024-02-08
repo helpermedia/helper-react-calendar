@@ -92,7 +92,7 @@ export default function Calendar({
   }
 
   return (
-    <div className={`cal-container ${numberOfMonths > 1 ? 'multiple' : 'single'}`}>
+    <div className={`cal-container ${numberOfMonths > 1 ? 'multiple' : 'single'}${numberOfMonths === 2 ? ' months-2' : ''}`}>
 
       <button className="cal-prev" onClick={() => onSelectMonth(currentDate.getMonth() - 1)}>
         {prevEl}
