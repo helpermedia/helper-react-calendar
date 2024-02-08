@@ -1,6 +1,6 @@
 export type CalMonth = {
   year: number
-  month: number
+  monthIndex: number
   weeks: CalWeek[]
 }
 

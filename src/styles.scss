@@ -9,7 +9,7 @@ $breakpoint-fullhd: 1408px;
 /* Colors */
 $font-color: #494949;
 $border-color: #fff; // #dbdbdb;
-$link-color: #3273dc;
+$link-color: #ccc;
 $white: #fff;
 
 body {
@@ -52,10 +52,16 @@ $gap: 1.5rem;
 
 .cal-month-title {
   font-size: 1.25rem;
-  line-height: 2.5rem;
   height: 2.5rem;
+  line-height: 2.5rem;
   border: 1px solid $border-color;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  select {
+    font-size: 1.25rem;
+  }
 }
 
 /* Navigation */
@@ -73,6 +79,11 @@ $gap: 1.5rem;
   svg {
     width: 1rem;
     color: $link-color;
+  }
+  &:hover {
+    svg {
+      color: $font-color
+    }
   }
 }
 .cal-prev {
