@@ -9,7 +9,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <div style={{ marginBottom: '2rem' }}>
       <Calendar numberOfMonths={1} changeMonth={true} changeYear={true} />
     </div>
-    <Calendar numberOfMonths={2} locale={de} changeYear={true} />
-    <Calendar numberOfMonths={3} locale={nl} changeMonth={true} />
+    <Calendar numberOfMonths={2} locale={de} changeYear={true} activeDate={new Date(2025, 3, 4)}/>
+    <Calendar numberOfMonths={3} locale={nl} changeMonth={true} activeDate='2026-10-16' />
   </React.StrictMode>,
 )

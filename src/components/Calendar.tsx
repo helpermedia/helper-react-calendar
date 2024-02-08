@@ -7,7 +7,7 @@ import { Locale, format, isSameDay, getWeek, addMonths } from 'date-fns'
 import { enUS } from 'date-fns/locale'
 
 type Props = {
-  activeDate?: Date,
+  activeDate?: Date | string
   numberOfMonths?: number,
   changeMonth?: boolean,
   changeYear?: boolean,
@@ -76,7 +76,7 @@ export default function Calendar({
   locale = enUS,
 }: Props): React.ReactElement {
 
-  const [currentDate, setCurrentDate] = useState(activeDate)
+  const [currentDate, setCurrentDate] = useState(typeof activeDate === 'string' ? new Date(activeDate) : activeDate)
 
   /* useMemo will only re-run the getMonths method when the currentDate or numberOfMonths changes */
   const months: CalMonth[] = useMemo(() => getMonths(currentDate, numberOfMonths), [currentDate, numberOfMonths])
