@@ -5,9 +5,9 @@ import { Locale, format, eachDayOfInterval } from 'date-fns'
 
 type Props = {
   month: CalMonth
-  locale: Locale,
-  changeMonth: boolean,
-  changeYear: boolean,
+  locale: Locale
+  changeMonth: boolean
+  changeYear: boolean
   onSelectMonth: (year: number) => void
   onSelectYear: (year: number) => void
 }
@@ -21,15 +21,15 @@ export default function Month({
   onSelectYear,
 }: Props): React.ReactElement {
 
-  /* Get names of days of the week */
-  const getWeekDays = () => {
+   /* Get names of days of the week */
+  const getWeekDayNames = () => {
     const firstDayOfTheWeek = month.weeks[1].days[0].date
     const lastDayOfTheWeek = month.weeks[1].days[6].date
     return eachDayOfInterval({ start: firstDayOfTheWeek, end: lastDayOfTheWeek })
   }
 
   /* Get names of months */
-  const getMonths = () => {
+  const getMonthNames = () => {
     const months = []
     for (let i = 0; i <= 11; i++) {
       months.push({month: i, name: format(new Date(month.year, i), 'LLLL', { locale: locale })})
@@ -54,7 +54,7 @@ export default function Month({
             onChange={e => onSelectMonth(parseInt(e.target.value))}
             value={month.monthIndex}
           >
-            {getMonths().map((item, key) => {
+            {getMonthNames().map((item, key) => {
               return <option value={item.month} key={key}>{item.name}</option>
             })}
           </select>
@@ -80,14 +80,17 @@ export default function Month({
         )}
       </div>
       <div className="cal-weekdays">
-        {getWeekDays().map((day, key) => (
+        {getWeekDayNames().map((day, key) => (
           <div key={key} className="cal-weekday">
             {format(day, 'EEEEEE', { locale: locale })}
           </div>
         ))}
       </div>
       {month.weeks.map(week => (
-        <Week key={week.days[0].date.toString()} week={week} locale={locale} />
+        <Week
+          key={week.days[0].date.toString()}
+          week={week}
+          locale={locale} />
       ))}
     </div>
   )

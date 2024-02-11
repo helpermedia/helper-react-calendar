@@ -9,12 +9,12 @@ import { enUS } from 'date-fns/locale'
 type Props = {
   active?: Date | string | { dates: Date[] } | { dateRange: Date[] }
   selectable?: { dates?: Date[], dateRange?: Date[] }
-  numberOfMonths?: number,
-  changeMonth?: boolean,
-  changeYear?: boolean,
-  prevEl?: React.ReactElement,
-  nextEl?: React.ReactElement,
-  locale?: Locale,
+  numberOfMonths?: number
+  changeMonth?: boolean
+  changeYear?: boolean
+  prevEl?: React.ReactElement
+  nextEl?: React.ReactElement
+  locale?: Locale
 }
 
 /* Create an array of CalDay types in a month */
@@ -107,6 +107,16 @@ export default function Calendar({
 
   /* useMemo will only re-run the getMonths method when the currentDate or numberOfMonths changes */
   const months: CalMonth[] = useMemo(() => getMonths(currentDate, numberOfMonths), [currentDate, numberOfMonths])
+
+  /* useMemo will only re-run the getActiveDates method when the active prop changes */
+  const activeDates: Date[] = useMemo(() => getActiveDates(active), [active])
+
+  /* Filter active dates for a specific month */
+  const getActiveDatesInMonth = (month: CalMonth) => {
+    return activeDates.filter(
+      date => date.getFullYear() === month.year &&
+              date.getMonth() === month.monthIndex)
+  }
 
   /* Change the current month */
   const onSelectMonth = (selectedMonth: number) => {

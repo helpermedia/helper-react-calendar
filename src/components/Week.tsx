@@ -4,7 +4,7 @@ import { Locale, format } from 'date-fns'
 
 type Props = {
   week: CalWeek
-  locale: Locale,
+  locale: Locale
 }
 
 export default function Month({
@@ -33,7 +33,7 @@ export default function Month({
       {emptyDays('begin')}
 
       {week.days.map(day => (
-        <div key={day.dayOfTheWeek} className="cal-day">
+        <div key={day.dayOfTheWeek} className={`cal-day`}>
           {format(day.date, 'd', { locale: locale })}
         </div>
       ))}
