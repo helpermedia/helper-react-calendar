@@ -4,7 +4,7 @@ import IconNext from '../assets/next.svg?react'
 import Month from './Month'
 import { CalMonth, CalWeek, CalDay } from '../types'
 import { Locale, format, isSameDay, getWeek, addMonths } from 'date-fns'
-import { enUS } from 'date-fns/locale'
+import { da, enUS } from 'date-fns/locale'
 
 type Props = {
   active?: Date | string | { dates: Date[] } | { dateRange: Date[] }
@@ -17,58 +17,8 @@ type Props = {
   locale?: Locale
 }
 
-/* Create an array of CalDay types in a month */
-const getDaysInMonth = (year: number, month: number): CalDay[] => {
-  const days = []
-  const day = new Date(year, month, 1)
-  while (parseInt(format(day, 'MM')) === month + 1) {
-    const classNames: string[] = []
-    if (isSameDay(new Date(), day)) {
-      classNames.push('today')
-    }
-
-    days.push({
-      date: new Date(day),
-      dayOfTheWeek: day.getDay() ? day.getDay() : 7,
-      weekNumber: getWeek(day, {weekStartsOn: 1}),
-      classNames: classNames,
-    })
-
-    day.setDate(day.getDate() + 1)
-  }
-  return days
-}
-
-/* Create an array of CalMonth types */
-const getMonths = (currentDate: Date, numberOfMonths: number) => {
-  const monthItems: CalMonth[] = []
-
-  for (let i = 0; i < numberOfMonths; i++) {
-    const currentDateNextMonth = addMonths(currentDate, i)
-    const year = currentDateNextMonth.getFullYear()
-    const monthIndex = currentDateNextMonth.getMonth()
-
-    // Get the days in this month and divide them into weeks
-    const days = getDaysInMonth(year, monthIndex)
-    const weekNumbers = [...new Set(days.map(day => day.weekNumber))] // Get unique week numbers
-    const weeks: CalWeek[] = []
-
-    weekNumbers.forEach(weekNumber => {
-      weeks.push({weekNumber: weekNumber, days: days.filter(day => day.weekNumber === weekNumber)})
-    })
-
-    monthItems.push({
-      year: year,
-      monthIndex: monthIndex,
-      weeks: weeks
-    })
-  }
-
-  return monthItems;
-}
-
 /* Return array of all active dates */
-const getActiveDates = (active: Date | string | { dates: Date[] } | { dateRange: Date[] }) => {
+const getActiveDates = (active: Date | string | { dates: Date[] } | { dateRange: Date[] } ) => {
   if (active instanceof Date) {
     return [active]
   }
@@ -89,12 +39,87 @@ const getActiveDates = (active: Date | string | { dates: Date[] } | { dateRange:
     return dates
   }
   else {
-    return [new Date()]
+    return []
   }
 }
 
+/* Create an array of CalMonth types */
+const getMonths = (currentDate: Date, numberOfMonths: number, activeDates: Date[],): CalMonth[] => {
+  const monthItems: CalMonth[] = []
+
+  for (let i = 0; i < numberOfMonths; i++) {
+    const currentDateNextMonth = addMonths(currentDate, i)
+    const year = currentDateNextMonth.getFullYear()
+    const monthIndex = currentDateNextMonth.getMonth()
+
+    // Get the days in this month and divide them into weeks
+    const days = getDaysInMonth(year, monthIndex, activeDates)
+    const weekNumbers = [...new Set(days.map(day => day.weekNumber))] // Get unique week numbers
+    const weeks: CalWeek[] = []
+
+    weekNumbers.forEach(weekNumber => {
+      weeks.push({weekNumber: weekNumber, days: days.filter(day => day.weekNumber === weekNumber)})
+    })
+
+    monthItems.push({
+      year: year,
+      monthIndex: monthIndex,
+      weeks: weeks
+    })
+  }
+
+  return monthItems;
+}
+
+
+/* Create an array of CalDay types in a month */
+const getDaysInMonth = (year: number, month: number, activeDates: Date[]): CalDay[] => {
+  const days = []
+  const day = new Date(year, month, 1)
+  while (parseInt(format(day, 'MM')) === month + 1) {
+    const classNames: string[] = []
+
+    // Check if this day is today and if so, add the today class.
+    if (isSameDay(new Date(), day)) {
+      classNames.push('today')
+    }
+
+    if (activeDates.length > 2) {
+      // Check if this day is the start of the active date range and if so, add the active-range-start class.
+      if (isSameDay(day, activeDates[0])) {
+        classNames.push('active-range-start')
+      }
+      // Check if this day is the end of the active date range and if so, add the active-range-end class.
+      else if (isSameDay(day, activeDates[activeDates.length - 1])) {
+        classNames.push('active-range-end')
+      }
+      // Check if this day is part of the active date range and if so, add the active-range class.
+      else if (activeDates.find(date => isSameDay(date, day))) {
+        classNames.push('active-range')
+      }
+    }
+    else {
+      // Check if this day is active and if so, add the active class.
+      if (activeDates.find(date => isSameDay(date, day))) {
+        classNames.push('active')
+      }
+    }
+
+    // Add the day to the days array
+    days.push({
+      date: new Date(day),
+      dayOfTheWeek: day.getDay() ? day.getDay() : 7,
+      weekNumber: getWeek(day, {weekStartsOn: 1}),
+      classNames: classNames,
+    })
+
+    day.setDate(day.getDate() + 1)
+  }
+  return days
+}
+
 export default function Calendar({
-  active = new Date(),
+  active,
   numberOfMonths = 1,
   changeMonth = false,
   changeYear = false,
@@ -103,20 +128,15 @@ export default function Calendar({
   locale = enUS,
 }: Props): React.ReactElement {
 
-  const [currentDate, setCurrentDate] = useState<Date>(getActiveDates(active)[0])
 
-  /* useMemo will only re-run the getMonths method when the currentDate or numberOfMonths changes */
-  const months: CalMonth[] = useMemo(() => getMonths(currentDate, numberOfMonths), [currentDate, numberOfMonths])
+  /* Get array of active dates */
+  const activeDates: Date[] = useMemo(() => active ? getActiveDates(active) : [], [active])
 
-  /* useMemo will only re-run the getActiveDates method when the active prop changes */
-  const activeDates: Date[] = useMemo(() => getActiveDates(active), [active])
+  /* Get and set the current date */
+  const [currentDate, setCurrentDate] = useState<Date>(activeDates[0] || new Date())
 
-  /* Filter active dates for a specific month */
-  const getActiveDatesInMonth = (month: CalMonth) => {
-    return activeDates.filter(
-      date => date.getFullYear() === month.year &&
-              date.getMonth() === month.monthIndex)
-  }
+  /* Create an array of CalMonth types */
+  const months: CalMonth[] = useMemo(() => getMonths(currentDate, numberOfMonths, activeDates), [currentDate, numberOfMonths, activeDates])
 
   /* Change the current month */
   const onSelectMonth = (selectedMonth: number) => {

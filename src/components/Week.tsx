@@ -33,7 +33,7 @@ export default function Month({
       {emptyDays('begin')}
 
       {week.days.map(day => (
-        <div key={day.dayOfTheWeek} className={`cal-day`}>
+        <div key={day.dayOfTheWeek} className={`cal-day ${day.classNames?.join(' ')}`}>
           {format(day.date, 'd', { locale: locale })}
         </div>
       ))}

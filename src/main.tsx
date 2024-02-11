@@ -21,6 +21,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <h3>3 Calendars - Spanish - Set active dates in Date format</h3>
     <Calendar numberOfMonths={3} locale={es} changeMonth={true} active={{dates: [new Date(2024, 5, 4), new Date(2024, 7, 3)]}} />
     <h3>3 Calendars - Set active date range with Dates</h3>
-    <Calendar numberOfMonths={3} active={{dateRange: [new Date(2024, 8, 3), new Date(2024, 10, 7)]}} />
+    <Calendar numberOfMonths={3} active={{dateRange: [new Date(2024, 9, 3), new Date(2024, 9, 21)]}} />
   </React.StrictMode>,
 )
