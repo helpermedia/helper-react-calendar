@@ -7,7 +7,8 @@ import { Locale, format, isSameDay, getWeek, addMonths } from 'date-fns'
 import { enUS } from 'date-fns/locale'
 
 type Props = {
-  activeDate?: Date | string
+  active?: Date | string | { dates: Date[] } | { dateRange: Date[] }
+  selectable?: { dates?: Date[], dateRange?: Date[] }
   numberOfMonths?: number,
   changeMonth?: boolean,
   changeYear?: boolean,
@@ -66,8 +67,34 @@ const getMonths = (currentDate: Date, numberOfMonths: number) => {
   return monthItems;
 }
 
+/* Return array of all active dates */
+const getActiveDates = (active: Date | string | { dates: Date[] } | { dateRange: Date[] }) => {
+  if (active instanceof Date) {
+    return [active]
+  }
+  else if (typeof active === 'string') {
+    return [new Date(active)]
+  }
+  else if (active && 'dates' in active) {
+    return active.dates
+  }
+  else if (active && 'dateRange' in active) {
+    // Generate an array of dates between the start and end date
+    const dates = []
+    const startDate = active.dateRange[0]
+    const endDate = active.dateRange[1]
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      dates.push(new Date(d))
+    }
+    return dates
+  }
+  else {
+    return [new Date()]
+  }
+}
+
 export default function Calendar({
-  activeDate = new Date(),
+  active = new Date(),
   numberOfMonths = 1,
   changeMonth = false,
   changeYear = false,
@@ -76,7 +103,7 @@ export default function Calendar({
   locale = enUS,
 }: Props): React.ReactElement {
 
-  const [currentDate, setCurrentDate] = useState(typeof activeDate === 'string' ? new Date(activeDate) : activeDate)
+  const [currentDate, setCurrentDate] = useState<Date>(getActiveDates(active)[0])
 
   /* useMemo will only re-run the getMonths method when the currentDate or numberOfMonths changes */
   const months: CalMonth[] = useMemo(() => getMonths(currentDate, numberOfMonths), [currentDate, numberOfMonths])
