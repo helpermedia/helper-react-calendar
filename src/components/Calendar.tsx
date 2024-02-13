@@ -4,11 +4,11 @@ import IconNext from '../assets/next.svg?react'
 import Month from './Month'
 import { CalMonth, CalWeek, CalDay } from '../types'
 import { Locale, format, isSameDay, getWeek, addMonths } from 'date-fns'
-import { da, enUS } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 
 type Props = {
   active?: Date | string | { dates: Date[] } | { dateRange: Date[] }
-  selectable?: { dates?: Date[], dateRange?: Date[] }
+  selectable?: 'all' | { dates: Date[] } | { dateRanges: Date[] | Date[][] }
   numberOfMonths?: number
   changeMonth?: boolean
   changeYear?: boolean
@@ -43,8 +43,39 @@ const getActiveDates = (active: Date | string | { dates: Date[] } | { dateRange:
   }
 }
 
+/* Return array of all selectable dates */
+const getSelectableDates = (selectable: { dates: Date[] } | { dateRanges: Date[] | Date[][] }) => {
+  if ('dates' in selectable) {
+    return selectable.dates
+  }
+  else if ('dateRanges' in selectable) {
+    let selectableDateRanges: Date[][] = []
+    // Check if first element is a Date or an array of Dates.
+    if (selectable.dateRanges[0] instanceof Date) {
+      selectableDateRanges = [selectable.dateRanges] as Date[][]
+    }
+    else {
+      selectableDateRanges = selectable.dateRanges as Date[][]
+    }
+
+    const dates: Date[] = []
+    selectableDateRanges.forEach(dateRange => {
+      // Generate an array of dates between the start and end date
+      const startDate = dateRange[0]
+      const endDate = dateRange[1]
+      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        dates.push(new Date(d))
+      }
+    });
+    return dates
+  }
+  else {
+    return []
+  }
+}
+
 /* Create an array of CalMonth types */
-const getMonths = (currentDate: Date, numberOfMonths: number, activeDates: Date[],): CalMonth[] => {
+const getMonths = (currentDate: Date, numberOfMonths: number, activeDates: Date[], selectableDates: Date[] | 'all'): CalMonth[] => {
   const monthItems: CalMonth[] = []
 
   for (let i = 0; i < numberOfMonths; i++) {
@@ -53,7 +84,7 @@ const getMonths = (currentDate: Date, numberOfMonths: number, activeDates: Date[
     const monthIndex = currentDateNextMonth.getMonth()
 
     // Get the days in this month and divide them into weeks
-    const days = getDaysInMonth(year, monthIndex, activeDates)
+    const days = getDaysInMonth(year, monthIndex, activeDates, selectableDates)
     const weekNumbers = [...new Set(days.map(day => day.weekNumber))] // Get unique week numbers
     const weeks: CalWeek[] = []
 
@@ -71,9 +102,8 @@ const getMonths = (currentDate: Date, numberOfMonths: number, activeDates: Date[
   return monthItems;
 }
 
-
 /* Create an array of CalDay types in a month */
-const getDaysInMonth = (year: number, month: number, activeDates: Date[]): CalDay[] => {
+const getDaysInMonth = (year: number, month: number, activeDates: Date[], selectableDates: Date[] | 'all'): CalDay[] => {
   const days = []
   const day = new Date(year, month, 1)
   while (parseInt(format(day, 'MM')) === month + 1) {
@@ -105,6 +135,14 @@ const getDaysInMonth = (year: number, month: number, activeDates: Date[]): CalDa
       }
     }
 
+    // Check if this day is selectable and if so, add the selectable class.
+    if (selectableDates === 'all') {
+      classNames.push('selectable')
+    }
+    else if (selectableDates.find(date => isSameDay(date, day))) {
+      classNames.push('selectable')
+    }
+
     // Add the day to the days array
     days.push({
       date: new Date(day),
@@ -120,6 +158,7 @@ const getDaysInMonth = (year: number, month: number, activeDates: Date[]): CalDa
 
 export default function Calendar({
   active,
+  selectable,
   numberOfMonths = 1,
   changeMonth = false,
   changeYear = false,
@@ -128,15 +167,27 @@ export default function Calendar({
   locale = enUS,
 }: Props): React.ReactElement {
 
-
   /* Get array of active dates */
   const activeDates: Date[] = useMemo(() => active ? getActiveDates(active) : [], [active])
+
+  /* Get array of selectable dates */
+  const selectableDates: Date[] | 'all' = useMemo(
+    () => selectable
+      ? typeof selectable === 'string'
+        ? selectable
+        : getSelectableDates(selectable as { dates: Date[] } | { dateRanges: Date[] | Date[][] })
+      : [],
+    [selectable]
+  )
 
   /* Get and set the current date */
   const [currentDate, setCurrentDate] = useState<Date>(activeDates[0] || new Date())
 
   /* Create an array of CalMonth types */
-  const months: CalMonth[] = useMemo(() => getMonths(currentDate, numberOfMonths, activeDates), [currentDate, numberOfMonths, activeDates])
+  const months: CalMonth[] = useMemo(
+    () => getMonths(currentDate, numberOfMonths, activeDates, selectableDates),
+    [currentDate, numberOfMonths, activeDates, selectableDates]
+  )
 
   /* Change the current month */
   const onSelectMonth = (selectedMonth: number) => {

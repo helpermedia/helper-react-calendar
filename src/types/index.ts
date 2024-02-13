@@ -18,7 +18,7 @@ export type CalDay = {
 
 export type Highlight = {
   dates?: Date[]
-  dateRange?: Date[]
+  dateRanges?: Date[]
   names: string[]
 }
 
