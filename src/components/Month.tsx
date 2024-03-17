@@ -47,10 +47,11 @@ export default function Month({
   }
 
   return (
-    <div className="cal-month">
-      <div className="cal-month-title">
+    <div>
+      <div className='text-center text-lg font-semibold py-4'>
         {changeMonth ? (
           <select
+            className='relative z-10 border border-gray-300 rounded mr-2'
             onChange={e => onSelectMonth(parseInt(e.target.value))}
             value={month.monthIndex}
           >
@@ -66,6 +67,7 @@ export default function Month({
         {!changeMonth || !changeYear ? <span>&nbsp;</span> : ''}
         {changeYear ? (
           <select
+            className='relative z-10 border border-gray-300 rounded'
             onChange={e => onSelectYear(parseInt(e.target.value))}
             value={month.year}
           >
@@ -79,7 +81,7 @@ export default function Month({
           </span>
         )}
       </div>
-      <div className="cal-weekdays">
+      <div className="grid grid-cols-7 text-center text-sm font-semibold uppercase text-gray-400">
         {getWeekDayNames().map((day, key) => (
           <div key={key} className="cal-weekday">
             {format(day, 'EEEEEE', { locale: locale })}

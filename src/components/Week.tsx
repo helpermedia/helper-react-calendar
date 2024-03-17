@@ -29,11 +29,11 @@ export default function Month({
   }
 
   return (
-    <div className={`cal-week week-${week.weekNumber}`}>
+    <div className={`grid grid-cols-7 text-center week-${week.weekNumber}`}>
       {emptyDays('begin')}
 
       {week.days.map(day => (
-        <div key={day.dayOfTheWeek} className={`cal-day ${day.classNames?.join(' ')}`}>
+        <div key={day.dayOfTheWeek} className={`py-2 ${day.classNames?.join(' ')}`}>
           {format(day.date, 'd', { locale: locale })}
         </div>
       ))}

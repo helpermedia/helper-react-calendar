@@ -200,28 +200,33 @@ export default function Calendar({
   }
 
   return (
-    <div className={`cal-container ${numberOfMonths > 1 ? 'multiple' : 'single'}${numberOfMonths === 2 ? ' months-2' : ''}`}>
-
-      <button className="cal-prev" onClick={() => onSelectMonth(currentDate.getMonth() - 1)}>
-        {prevEl}
-      </button>
-
-      <button className="cal-next" onClick={() => onSelectMonth(currentDate.getMonth() + 1)}>
-        {nextEl}
-      </button>
-
+    <div className={`${numberOfMonths > 1 ? 'grid ' : ''}${numberOfMonths === 2 ? 'grid-cols-2' : `${numberOfMonths > 2 ? 'grid-cols-3' : ''}`}`}>
+      <div className="absolute top-4 left-0 grid grid-cols-7 w-full text-center">
+        <div>
+          <button onClick={() => onSelectMonth(currentDate.getMonth() - 1)}>
+            {prevEl}
+          </button>
+        </div>
+        <div className="col-span-5" />
+        <div>
+          <button onClick={() => onSelectMonth(currentDate.getMonth() + 1)}>
+            {nextEl}
+          </button>
+        </div>
+      </div>
       {months.map((month, key) => (
-        <Month
-          key={key}
-          month={month}
-          locale={locale}
-          changeMonth={key === 0 ? changeMonth : false}
-          changeYear={key === 0 ? changeYear : false}
-          onSelectMonth={onSelectMonth}
-          onSelectYear={onSelectYear}
-        />
+        <div className="max-w-96 relative rounded shadow-lg">
+          <Month
+            key={key}
+            month={month}
+            locale={locale}
+            changeMonth={key === 0 ? changeMonth : false}
+            changeYear={key === 0 ? changeYear : false}
+            onSelectMonth={onSelectMonth}
+            onSelectYear={onSelectYear}
+          />
+        </div>
       ))}
-
     </div>
   )
 }
